@@ -1,1 +1,1 @@
-url="<Enter your feed URL>"
+url=""
