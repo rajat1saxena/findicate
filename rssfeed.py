@@ -4,17 +4,24 @@ import subprocess
 import pickle
 import sys
 import time
+import optparse
+import sys
+import os
 import myurl
 
 url=''
+os.chdir(sys.path[0])
 
 #This is the function which will do all the processing of the feed xml file 
 def notifier(fbfeedurl):
 #first of all i fetched the data and stored it into a local file named "rssfile.xml" in oder to do the parsing.This file will be removed from harddisk when this function quits 
- try:
-     f=urllib.urlopen(fbfeedurl)
- except:
-     subprocess.call("notify-send 'Network Error' 'Check your internet connection'",shell=True)
+ if fbfeedurl!="":
+     try:
+      f=urllib.urlopen(fbfeedurl)
+     except:
+      subprocess.call("notify-send 'Network Error' 'Check your internet connection'",shell=True)
+ else:
+     subprocess.call("notify-send 'No Facebook Feed URL' 'Please enter your feed url first'",shell=True)
 
  rssfile=open("rssfile.xml","w")
  for each in f:
@@ -57,7 +64,17 @@ def notifier(fbfeedurl):
      subprocess.call(workstring,shell=True)
  subprocess.call("rm ./rssfile.xml",shell=True)
 if __name__=="__main__":
-    while(True):
-        notifier(myurl.url)
-        time.sleep(10)
+    parser=optparse.OptionParser(usage='Usage: %prog <options>')
+    parser.add_option('-u','--url',dest='url',help='enter new fb feed url')
+    parser.add_option('-v','--vella',help='this is faltu option')
+    (opts,args)=parser.parse_args()
+    if opts.url is not None:
+        with open("myurl.py","w") as myurlf:
+            writestring='url="'+opts.url+'"'
+            for each in writestring:
+                myurlf.write(each)
+    else:
+        while(True):
+         notifier(myurl.url)
+         time.sleep(10)
 
